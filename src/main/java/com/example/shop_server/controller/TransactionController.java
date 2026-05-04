@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +39,10 @@ public class TransactionController {
             r.price = i.getPrice();
             return r;
         }).toList();
+
+        response.totalCost = transaction.getItems().stream()
+                .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return response;
     }
@@ -81,19 +86,6 @@ public class TransactionController {
 
         Transaction saved = transactionRepository.save(transaction);
 
-        TransactionResponse response = new TransactionResponse();
-        response.id = saved.getId();
-        response.dateCreated = saved.getDateCreated();
-        response.paymentMethod = saved.getPaymentMethod().name();
-
-        response.items = saved.getItems().stream().map(i -> {
-            TransactionItemResponse r = new TransactionItemResponse();
-            r.productId = i.getProduct().getId();
-            r.quantity = i.getQuantity();
-            r.price = i.getPrice();
-            return r;
-        }).toList();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(mapToResponse(saved));
     }
 }

@@ -47,7 +47,7 @@ public class UserController {
         incomingUser.setEmail(incomingUser.getEmail());
         incomingUser.setSuperuser();
 
-        // Hashing passwords
+        // Hashing password
         String hashedPassword = passwordEncoder.encode((incomingUser.getPassword()));
         incomingUser.setPassword(hashedPassword);
 
@@ -60,19 +60,36 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        return userRepository.findByEmail(loginRequest.getEmail())
-                .map(user -> {
-                    if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                        String token = jwtUtil.generateToken(user.getEmail());
-                        return ResponseEntity.ok(new AuthResponse(token));
-                    } else {
-                        return ResponseEntity
-                                .status(401)
-                                .body("Incorrect Password");
-                    }
-                })
-                .orElseGet(() -> ResponseEntity
-                        .status(404)
-                        .body("User not found"));
+        var userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (
+                userOptional.isPresent() &&
+                passwordEncoder.matches(loginRequest.getPassword(), userOptional.get().getPassword())
+        ) {
+            String token = jwtUtil.generateToken(userOptional.get().getEmail());
+            return ResponseEntity.ok(new AuthResponse(token));
+        }
+
+        // Always return 403 for any login failure
+        return ResponseEntity.status(403).body("Invalid Credentials");
     }
+
+    // Do not do the below - it's critical that we don't return separate responses for username/password failure
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+//        return userRepository.findByEmail(loginRequest.getEmail())
+//                .map(user -> {
+//                    if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+//                        String token = jwtUtil.generateToken(user.getEmail());
+//                        return ResponseEntity.ok(new AuthResponse(token));
+//                    } else {
+//                        return ResponseEntity
+//                                .status(401)
+//                                .body("Incorrect Password");
+//                    }
+//                })
+//                .orElseGet(() -> ResponseEntity
+//                        .status(404)
+//                        .body("User not found"));
+//    }
 }

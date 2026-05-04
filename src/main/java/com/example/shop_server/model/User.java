@@ -21,6 +21,9 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
+    // Access.WRITE_ONLY ensures that we don't pass this over in GET mappings.
+    // Even though the password is hashed, it's still best not to expose it.
+    // This is an INCREDIBLY useful feature
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
