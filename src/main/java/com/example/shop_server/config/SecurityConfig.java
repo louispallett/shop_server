@@ -47,7 +47,10 @@ public class SecurityConfig {
                                 "/api/product/get-all",
                                 "/api/product/get",
                                 "/api/product/get-by-name",
-                                "/api/product/create"
+                                "/api/product/create",
+                                "/api/transaction/get-all",
+                                "/api/transaction/get",
+                                "/api/transaction/create"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

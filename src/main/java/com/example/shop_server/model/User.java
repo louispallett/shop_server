@@ -78,11 +78,12 @@ public class User {
         this.password = password;
     }
 
-    public void setDateCreated() {
-        this.dateCreated = new Date();
-    }
-
     public void setSuperuser() {
         this.superuser = false;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateCreated = new Date();
     }
 }

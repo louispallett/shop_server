@@ -2,6 +2,7 @@ package com.example.shop_server.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -15,15 +16,15 @@ public class Transaction {
     @Column(nullable = false)
     private Date dateCreated;
 
-    @ManyToOne
-    @JoinColumn(name = "products_id")
-    private List<Product> products;
+    @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<TransactionItem> items = new ArrayList<>();
 
     public enum PaymentMethod {
         CASH,
         CARD
     }
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMethod paymentMethod;
 
@@ -32,10 +33,10 @@ public class Transaction {
 
     public Transaction() {}
 
-    public Transaction(List<Product> products) {
-        this.products = products;
+    public Transaction(PaymentMethod paymentMethod, int cardDigits) {
+        this.paymentMethod = paymentMethod;
+        this.cardDigits = cardDigits;
     }
-
     public Long getId() {
         return id;
     }
@@ -44,19 +45,34 @@ public class Transaction {
         this.id = id;
     }
 
+    public List<TransactionItem> getItems() {
+        return items;
+    }
+
+    public void addItem(TransactionItem item) {
+        items.add(item);
+        item.setTransaction(this);
+    }
+
+    public void removeItem(TransactionItem item) {
+        items.remove(item);
+        item.setTransaction(null);
+    }
+
     public Date getDateCreated() {
         return dateCreated;
     }
 
-    public void setDateCreated() {
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    @PrePersist
+    protected void onCreate() {
         this.dateCreated = new Date();
-    }
-
-    public List<Product> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<Product> products) {
-        this.products = products;
     }
 }

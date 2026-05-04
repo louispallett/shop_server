@@ -43,7 +43,8 @@ public class Category {
         return dateCreated;
     }
 
-    public void setDateCreated() {
+    @PrePersist
+    protected void onCreate() {
         this.dateCreated = new Date();
     }
 }

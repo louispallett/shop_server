@@ -43,8 +43,6 @@ public class CategoryController {
                     .body("Category with name already exists");
         }
 
-        incomingCategory.setDateCreated();
-
         Category savedCategory = categoryRepository.save(incomingCategory);
         return ResponseEntity.ok(savedCategory);
     }

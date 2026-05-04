@@ -44,7 +44,6 @@ public class UserController {
                     .body("Email already registered");
         }
 
-        incomingUser.setDateCreated();
         incomingUser.setEmail(incomingUser.getEmail());
         incomingUser.setSuperuser();
 

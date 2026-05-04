@@ -36,9 +36,6 @@ public class ProductController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createProduct(@RequestBody Product incomingProduct) {
-        incomingProduct.setName(incomingProduct.getName().toLowerCase());
-        incomingProduct.setDateCreated();
-        incomingProduct.setStock(0);
 
         Product savedProduct = productRepository.save(incomingProduct);
         return ResponseEntity.ok(savedProduct);
