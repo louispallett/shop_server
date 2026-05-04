@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/transaction")
@@ -24,16 +25,37 @@ public class TransactionController {
     @Autowired
     private ProductRepository productRepository;
 
+    private TransactionResponse mapToResponse(Transaction transaction) {
+        TransactionResponse response = new TransactionResponse();
+        response.id = transaction.getId();
+        response.dateCreated = transaction.getDateCreated();
+        response.paymentMethod = transaction.getPaymentMethod().name();
+
+        response.items = transaction.getItems().stream().map(i -> {
+            TransactionItemResponse r = new TransactionItemResponse();
+            r.productId = i.getProduct().getId();
+            r.quantity = i.getQuantity();
+            r.price = i.getPrice();
+            return r;
+        }).toList();
+
+        return response;
+    }
+
     @GetMapping("/get-all")
-    public ResponseEntity<List<Transaction>> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
-        return ResponseEntity.ok(transactions);
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions() {
+        List<TransactionResponse> responses = transactionRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/get")
-    public ResponseEntity<Transaction> getTransaction(@RequestParam Long id) {
+    public ResponseEntity<TransactionResponse> getTransaction(@RequestParam Long id) {
         return transactionRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(t -> ResponseEntity.ok(mapToResponse(t)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
