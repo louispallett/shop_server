@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -60,7 +59,6 @@ public class TransactionController {
 
         Transaction saved = transactionRepository.save(transaction);
 
-        // map to response DTO
         TransactionResponse response = new TransactionResponse();
         response.id = saved.getId();
         response.dateCreated = saved.getDateCreated();
