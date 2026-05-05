@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping("/get")
     public ResponseEntity<User> getUser(@RequestParam String email) {
-        return userRepository.findByEmail(email)
+        return userRepository.findByEmail(email.toLowerCase())
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -60,7 +60,7 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        var userOptional = userRepository.findByEmail(loginRequest.getEmail());
+        var userOptional = userRepository.findByEmail(loginRequest.getEmail().toLowerCase());
 
         if (
                 userOptional.isPresent() &&
