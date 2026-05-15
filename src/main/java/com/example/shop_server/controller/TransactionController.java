@@ -1,16 +1,16 @@
 package com.example.shop_server.controller;
 
-import com.example.shop_server.dto.TransactionItemRequest;
-import com.example.shop_server.dto.TransactionItemResponse;
-import com.example.shop_server.dto.TransactionRequest;
-import com.example.shop_server.dto.TransactionResponse;
+import com.example.shop_server.dto.*;
 import com.example.shop_server.model.Product;
 import com.example.shop_server.model.Transaction;
 import com.example.shop_server.model.TransactionItem;
+import com.example.shop_server.model.User;
 import com.example.shop_server.repository.ProductRepository;
 import com.example.shop_server.repository.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -43,6 +43,13 @@ public class TransactionController {
                 .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        User user = transaction.getUser();
+        UserResponse userResponse = new UserResponse();
+        userResponse.firstName = user.getFirstName();
+        userResponse.lastName = user.getLastName();
+
+        response.user = userResponse;
+
         return response;
     }
 
@@ -65,14 +72,19 @@ public class TransactionController {
 
     @PostMapping("/create")
     public ResponseEntity<TransactionResponse> createTransaction(@RequestBody TransactionRequest request) {
+        // Fetch logged in user from the security context
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+
         Transaction transaction = new Transaction(
                 Transaction.PaymentMethod.valueOf(request.paymentMethod),
                 request.cardDigits
         );
+        transaction.setUser(user);
 
         for (TransactionItemRequest itemReq : request.items) {
             Product product = productRepository.findById(itemReq.productId)
-                    .orElseThrow();
+                    .orElseThrow(() -> new RuntimeException(("Product not found")));
 
             TransactionItem item = new TransactionItem(
                     product,

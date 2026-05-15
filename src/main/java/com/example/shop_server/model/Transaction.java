@@ -17,6 +17,10 @@ public class Transaction extends Base {
     @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<TransactionItem> items = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false, updatable = false)
+    private User user;
+
     public enum PaymentMethod {
         CASH,
         CARD

@@ -10,4 +10,5 @@ public class TransactionResponse {
     public String paymentMethod;
     public List<TransactionItemResponse> items;
     public BigDecimal totalCost;
+    public UserResponse user;
 }
