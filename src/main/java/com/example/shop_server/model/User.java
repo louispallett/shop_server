@@ -2,16 +2,17 @@ package com.example.shop_server.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users", schema = "public")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Getter
+@Setter
+@NoArgsConstructor
+public class User extends Base {
     @Column(nullable = false)
     private String firstName;
 
@@ -29,64 +30,23 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Date dateCreated;
-
-    @Column(nullable = false)
     private Boolean superuser;
-
-    public User() {}
 
     public User(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email.toLowerCase();
         this.password = password;
-        this.dateCreated = new Date();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public Boolean getSuperuser() {
-        return superuser;
-    }
-
-    public void setName(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
     }
 
     public void setEmail(String email) {
         this.email = email.toLowerCase();
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setSuperuser() {
-        this.superuser = false;
-    }
-
     @PrePersist
     protected void onCreate() {
-        this.dateCreated = new Date();
+        // We require super here to not overwrite the onCreate() method in Base
+        super.onCreate();
+        this.superuser = false;
     }
 }

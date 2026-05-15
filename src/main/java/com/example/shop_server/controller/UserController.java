@@ -45,7 +45,6 @@ public class UserController {
         }
 
         incomingUser.setEmail(incomingUser.getEmail());
-        incomingUser.setSuperuser();
 
         // Hashing password
         String hashedPassword = passwordEncoder.encode((incomingUser.getPassword()));

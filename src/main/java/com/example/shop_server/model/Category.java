@@ -1,50 +1,18 @@
 package com.example.shop_server.model;
 
 import jakarta.persistence.*;
-
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "categories", schema = "public")
-public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Category extends Base {
     @Column(unique = true, nullable = false)
     private String name;
-
-    @Column(nullable = false)
-    private Date dateCreated;
-
-    public Category() {}
-
-    public Category(String name) {
-        this.name = name;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Date getDateCreated() {
-        return dateCreated;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.dateCreated = new Date();
-    }
 }
