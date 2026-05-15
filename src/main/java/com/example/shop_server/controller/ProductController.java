@@ -40,4 +40,11 @@ public class ProductController {
         Product savedProduct = productRepository.save(incomingProduct);
         return ResponseEntity.ok(savedProduct);
     }
+
+    // TODO
+    // We want to introduce a method which reduces stock, so that when a transaction occurs including one of those products, the stock is automatically updated.
+    // Now, we could have:
+    //  -> A unique method here to reduce stock
+    //  -> A method inside transaction controller to do this
+    //  -> Or a generic update method which could update anything, but the client is designed to autosend it with the new stock.
 }

@@ -2,6 +2,8 @@
 
 This application is a simple shop server built with Java Spring and PostgreSQL, designed to manage users, products, transactions, and stock. It also demonstrates best practices like password hashing, JWT authentication, and CRUD operations.
 
+![A screen capture of a terminal with a curl request to fetch information on a user](https://res.cloudinary.com/divlee1zx/image/upload/v1778874382/Screenshot_20260515_204342_bfzfaw.png)
+
 > ⚠️ This project is intended for educational purposes and personal learning, rather than production use.
 
 ### Features
